@@ -1,0 +1,197 @@
+<style>
+    .content_image {
+        display: flex;
+        width: max-content;
+        gap: 1rem;
+    }
+
+    .horizontal_scroll {
+        width: 100%;
+        overflow-x: scroll;
+        scrollbar-color: transparent transparent;
+    }
+
+    .horizontal_scroll::-webkit-scrollbar {
+        display: none;
+    }
+
+    .content_image img {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+    }
+</style>
+
+<template>
+    <div class="flex justify-center items-center min-h-screen mb-6">
+        <div class="card bg-base-300 w-96 shadow-xl">
+            <div class="card-body">
+                <h2 class="flex justify-center card-title text-center">
+                    Edit Souvenir
+                </h2>
+                <form class="card-body pt-3" @submit.prevent="editData">
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text">Nama</span>
+                        </label>
+                        <input v-model="name" type="text" placeholder="Name" class="input input-bordered" required />
+                    </div>
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text">Description</span>
+                        </label>
+                        <textarea v-model="description" placeholder="Description" class="textarea textarea-bordered"
+                            required></textarea>
+                    </div>
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text">Price</span>
+                        </label>
+                        <input v-model="price" type="decimal" placeholder="Price" class="input input-bordered"
+                            required />
+                    </div>
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text">Quantity</span>
+                        </label>
+                        <input v-model="quantity" type="decimal" placeholder="Quantity" class="input input-bordered"
+                            required />
+                    </div>
+                    <!-- Menampilkan Gambar -->
+                    <div class="horizontal_scroll">
+                        <div v-if="image && image.length" class="content_image">
+                            <img v-for="(data_gambar, index) in image" :key="index" :src="`${lokasi}/${data_gambar}`"
+                                alt="Gambar Souvenir" />
+                        </div>
+                    </div>
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text">Images</span>
+                        </label>
+                        <input ref="images" type="file" @change="handleFileUpload" multiple />
+                    </div>
+                    <!-- <button @click="removeImage(index)" class="btn btn-error mb-3">
+                X
+              </button> -->
+                    <!-- Menampilkan PDF -->
+                    <div v-if="pdfUrl" class="form-control mt-4">
+                        <label class="label">
+                            <span class="label-text">Current PDF</span>
+                        </label>
+                        <a :href="pdfUrl" target="_blank" class="link link-primary">View PDF</a>
+                    </div>
+
+                    <!-- Upload PDF -->
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text">Upload New PDF</span>
+                        </label>
+                        <input ref="pdf" type="file" accept="application/pdf" @change="handlePDFUpload" />
+                    </div>
+
+                    <div class="form-control mt-2">
+                        <button class="btn btn-primary p-3 mb-2" type="submit">
+                            Submit
+                        </button>
+                        <router-link to="/souvenir" class="btn btn-primary p-3">
+                            Back
+                        </router-link>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+    import { toast } from "vue3-toastify";
+    import "vue3-toastify/dist/index.css";
+    import apiClient from "@/service/sovernir";
+    export default {
+        data() {
+            return {
+                name: "",
+                description: "",
+                price: "",
+                quantity: "",
+                image: [],
+                pdfUrl: "",
+                pdfFile: null,
+                id: null,
+                lokasi: "http://laravel-jwt.test/storage/",
+            };
+        },
+        async created() {
+            this.id = this.$route.params.id;
+            try {
+                const response = await apiClient.get(`/souvenirs/${this.id}`);
+                const souvenir = response.data;
+                this.name = souvenir.name;
+                this.description = souvenir.description;
+                this.price = souvenir.price;
+                this.quantity = souvenir.quantity;
+                // this.uploadedImages = souvenir.image;
+                this.image = JSON.parse(souvenir.image);
+                this.pdfUrl = souvenir.pdf;
+                console.log(this.image);
+            } catch (error) {
+                this.notifGagal();
+            }
+        },
+        methods: {
+            async editData() {
+                try {
+                    const formData = new FormData();
+                    formData.append("name", this.name);
+                    formData.append("description", this.description);
+                    formData.append("price", this.price);
+                    formData.append("quantity", this.quantity);
+
+                    for (let i = 0; i < this.uploadedImages; i++) {
+                        formData.append("image[]", this.uploadedImages);
+                    }
+                    if (this.pdf > 0) {
+                        formData.append("pdf", this.pdf[0]);
+                    }
+
+                    const response = await apiClient.put(
+                        `/souvenirs/${this.id}`,
+                        formData,
+                        {
+                            headers: {
+                                "Content-Type": "multipart/form-data",
+                            },
+                        }
+                    );
+
+                    this.souvenir = response.data;
+                    this.notifBerhasil();
+                } catch (error) {
+                    this.notifGagal();
+                }
+            },
+            handleFileUpload() {
+                const files = this.$refs.images.files;
+                for (let i = 0; i < files.length; i++) {
+                    this.uploadedImages.push({
+                        name: files[i].name,
+                        url: URL.createObjectURL(files[i]),
+                    });
+                }
+            },
+            removeImage(index) {
+                this.uploadedImages.splice(index, 1);
+            },
+            notifGagal() {
+                toast("Gagal Edit souvenir !!!", {
+                    autoClose: 1000,
+                });
+            },
+            notifBerhasil() {
+                toast("Berhasil Edit Data", {
+                    autoClose: 1000,
+                });
+            },
+        },
+    };
+</script>
