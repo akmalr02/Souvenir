@@ -26,11 +26,6 @@
           </p>
         </div>
       </div>
-      <!-- <div class="mt-8">
-        <router-link to="/login" class="btn btn-primary"
-          >Get Started</router-link
-        >
-      </div> -->
     </div>
   </div>
 </template>

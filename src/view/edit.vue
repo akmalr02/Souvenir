@@ -176,7 +176,6 @@ import "vue3-toastify/dist/index.css";
 const router = useRouter();
 const route = useRoute();
 
-// define state
 const name = ref("");
 const description = ref("");
 const price = ref("");
@@ -208,7 +207,6 @@ const handleFileChange = (e) => {
   const files = Array.from(e.target.files);
   uploadedImages.value = [...uploadedImages.value, ...files];
 
-  // Validasi minimal 3 gambar
   if (uploadedImages.value.length < 3) {
     errors.value.image = ["Please upload at least 3 images."];
   } else {
@@ -223,7 +221,6 @@ const handlePDFUpload = (e) => {
 const removeImage = (index) => {
   uploadedImages.value.splice(index, 1);
 
-  // Periksa lagi jumlah gambar setelah penghapusan
   if (uploadedImages.value.length < 3) {
     errors.value.image = ["Please upload at least 3 images."];
   } else {
@@ -232,7 +229,6 @@ const removeImage = (index) => {
 };
 
 const updatePost = async () => {
-  // Cek validasi jumlah gambar sebelum submit
   if (uploadedImages.value.length < 3) {
     errors.value.image = ["Please upload at least 3 images."];
     return;

@@ -43,10 +43,10 @@
           <p>
             {{ description }}
           </p>
-          <button @click="downloadPdf" class="btn btn-outline btn-accent">
-            <ArrowDownIcon class="size-6 text-yellow-200-500" />
+          <button @click="downloadPdf" class="btn btn-outline btn-accent m-3">
+            <ArrowDownIcon class="size-6 text-yellow-200-500" /> Download
           </button>
-          <div class="card-actions">
+          <div class="card-actions mt-3">
             <router-link to="/souvenir" class="btn btn-primary p-3">
               Back
             </router-link>
@@ -58,7 +58,6 @@
 </template>
 
 <script>
-// import { DownloadIcon } from "@vue-hero-icons/outline";
 import apiClient from "../service/sovernir";
 import { ArrowDownIcon } from "@heroicons/vue/24/solid";
 
@@ -76,7 +75,6 @@ export default {
       quantity: "",
       image: [],
       pdf: "",
-      // souvenir: "",
       lokasi: "http://laravel-jwt.test/storage/",
     };
   },
@@ -90,19 +88,15 @@ export default {
         const response = await apiClient.get(`/souvenirs/${id}`);
         const souvenir = response.data;
 
-        // Asumsikan `souvenir.pdf` adalah URL ke file PDF
         const pdfUrl = this.lokasi + souvenir.pdf;
 
-        // Buat link element untuk mendownload file
         const link = document.createElement("a");
         link.href = pdfUrl;
-        link.setAttribute("download", "souvenir.pdf"); // Nama file yang diinginkan
+        link.setAttribute("download", "souvenir.pdf");
 
-        // Append link ke body untuk men-trigger download
         document.body.appendChild(link);
         link.click();
 
-        // Hapus link element setelah download
         document.body.removeChild(link);
       } catch (error) {
         console.error("Error downloading the PDF:", error);
@@ -138,11 +132,8 @@ export default {
         this.description = souvenir.description;
         this.price = souvenir.price;
         this.quantity = souvenir.quantity;
-        // this.image = souvernir.image.JSON.parse("image[]", souvenir.image);
         this.image = JSON.parse(souvenir.image);
         this.pdf = souvenir.pdf;
-
-        // console.log(this.pdf);
       } catch (error) {
         if (error.response && error.response.status === 401) {
           this.handleExpiredToken();

@@ -138,7 +138,6 @@ export default {
       const files = Array.from(event.target.files);
       this.uploadedImages = [...this.uploadedImages, ...files];
 
-      // Validasi minimal 3 gambar
       if (this.uploadedImages.length < 3) {
         this.errors.image = "Minimal unggah 3 gambar!";
       } else {
@@ -151,7 +150,6 @@ export default {
     removeImage(index) {
       this.uploadedImages.splice(index, 1);
 
-      // Periksa lagi jumlah gambar setelah penghapusan
       if (this.uploadedImages.length < 3) {
         this.errors.image = "Minimal unggah 3 gambar!";
       } else {
@@ -190,7 +188,6 @@ export default {
         });
 
         this.souvenir = response.data;
-        console.log(response);
         this.resetForm();
         this.notifBerhasil();
       } catch (error) {
@@ -223,10 +220,9 @@ export default {
 </script>
 
 <style>
-/* Tambahkan styling untuk pesan kesalahan */
 .error-message {
   color: red;
   font-weight: bold;
-  margin-top: 0.5rem; /* Beri jarak sedikit dari elemen lainnya */
+  margin-top: 0.5rem;
 }
 </style>

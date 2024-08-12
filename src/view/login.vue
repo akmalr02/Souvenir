@@ -99,7 +99,6 @@ export default {
         this.$router.push({ name: "Souvenir" });
       } catch (error) {
         this.notifGagal();
-        // console.error("Login failed:", error);
       }
     },
     checkAuthStatus() {

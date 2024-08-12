@@ -28,13 +28,13 @@
               <td>
                 <router-link
                   :to="{ name: 'view', params: { id: souvenir.id } }"
-                  class="btn btn-primary mr-2"
+                  class="btn btn-primary mt-2"
                 >
                   <EyeIcon class="size-6 text-blue-100-300" /> View
                 </router-link>
                 <router-link
                   :to="{ name: 'edit', params: { id: souvenir.id } }"
-                  class="btn btn-outline btn-warning ml-2"
+                  class="btn btn-outline btn-warning mt-2"
                 >
                   <PencilIcon class="size-6 text-yellow-200-500" /> Edit
                 </router-link>
@@ -109,7 +109,6 @@ export default {
       try {
         const response = await apiClient.get("/souvenirs");
         this.souvenirs = response.data;
-        // console.log(this.souvenirs);
       } catch (error) {
         if (error.response && error.response.status === 401) {
           this.handleExpiredToken();
@@ -122,7 +121,7 @@ export default {
     async deleteSouvenir(id) {
       try {
         await apiClient.delete(`/souvenirs/${id}`);
-        this.fetchSouvenirs(); // Refresh the list after deletion
+        this.fetchSouvenirs();
       } catch (error) {
         if (error.response && error.response.status === 401) {
           this.handleExpiredToken();
